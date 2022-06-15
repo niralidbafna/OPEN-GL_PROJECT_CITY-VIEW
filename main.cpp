@@ -1,18 +1,33 @@
 #include<GL/glut.h>
 #include<math.h>
+#include<string.h>
 #include<stdio.h>
 #include<stdlib.h>
 float light_r = 1, light_g = 1, light_b = 1;
 float bg_r = 0, bg_g = 0.8, bg_b = 1.5; //bg down
 float bg_r2 = 1, bg_g2 = 1, bg_b2 = 0; //bg up
 float star_r = 1, star_g = 1, star_b = 0;
-float mall_dr = 1, mall_dg = 0.8, mall_db = 0.5;
+float school_dr = 184, school_dg = 88, school_db = 64;
 float grass_g = 0.5;
+struct Point {
+	GLint x;
+	GLint y;
+};
 void init(void)
 {
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 	glMatrixMode(GL_PROJECTION);
 	gluOrtho2D(0, 1000, 0, 600);
+}
+void print(int x, int y, float r, float g, float b, const char* str)
+{
+	glColor3f(r, g, b);
+	glRasterPos2f(x, y);
+	int len, i;
+	len = (int)strlen(str);
+	for (i = 0; i < len; i++) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
+	}
 }
 void streetlight()
 {
@@ -65,17 +80,401 @@ void background()
 	glEnd();
 	glFlush();
 }
-void mall()
+void school()
 {
-	glColor3f(mall_dr, mall_dg, mall_db);
+	//building
+	glColor3ub(school_dr, school_dg, school_db);
 	glBegin(GL_POLYGON);
 	glVertex2i(320, 140);
 	glVertex2i(680, 140);
+	glColor3ub(241, 130, 94);
 	glVertex2i(680, 350);
 	glVertex2i(320, 350);
 	glEnd();
+
+	//building border
+	glLineWidth(0.1);
+	glBegin(GL_LINE_LOOP);
+	glColor3ub(194, 88, 64);
+	glVertex2f(320, 140);
+	glVertex2f(680, 140);
+	glVertex2f(680, 350);
+	glVertex2f(320, 350);
+	glEnd();
+	
+
+	//board
+	glBegin(GL_POLYGON);
+	glColor3ub(40, 34, 34);
+	glVertex2f(420, 330);
+	glVertex2f(590, 330);
+	glVertex2f(590, 380);
+	glVertex2f(420, 380);
+	glEnd();
+	print(430,345,255,255,255,"RNS SCHOOL");
+
+	//board border
+	glBegin(GL_LINE_LOOP);
+	glColor3f(0, 0, 0);
+	glVertex2f(420, 330);
+	glVertex2f(590, 330);
+	glVertex2f(590, 380);
+	glVertex2f(420, 380);
+	glEnd();
+
+	//bulb
+	glColor3f(light_r, light_g, light_b);
+	glPointSize(4);
+	glBegin(GL_POINTS);
+	glVertex2f(419, 330);
+	glVertex2f(591, 330);
+	glVertex2f(591, 380);
+	glVertex2f(419, 380);
+
+	glEnd();
+	//school door
+	glBegin(GL_POLYGON);
+	glColor3ub(183, 184, 188);
+	glVertex2f(420, 140);
+	glVertex2f(580, 140);
+	glVertex2f(580, 240);
+	glVertex2f(420, 240);
+	glEnd();
+
+	//school door border
+	glColor3ub(100, 99, 97);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(420, 140);
+	glVertex2f(580, 140);
+	glVertex2f(580, 240);
+	glVertex2f(420, 240);
+	glEnd();
+
+	// School Door Divider
+	glBegin(GL_LINES);
+	glColor3ub(100, 99, 97);
+	glVertex2f(500, 140);
+	glVertex2f(500, 240);
+	glEnd();
+
+	//windows
+	int p = 340, q = 260;
+	for (int j = 0; j < 4; j++) {
+		glBegin(GL_POLYGON);
+		glColor3ub(59, 91, 132);
+		glVertex2f(p , q);
+		glVertex2f(p + 50, q);
+		glVertex2f(p + 50, q + 50);
+		glColor3ub(97, 131, 159);
+		glVertex2f(p, q + 50);
+		glEnd();
+		p += 90;
+	}
+
+	p = 340;
+	q -= 80;
+	for (int j = 0; j < 2; j++) {
+		glBegin(GL_POLYGON);
+		glColor3ub(59, 91, 132);
+		glVertex2f(p, q);
+		glVertex2f(p + 50, q);
+		glVertex2f(p + 50, q + 50);
+		glColor3ub(97, 131, 159);
+		glVertex2f(p, q + 50);
+		glEnd();
+		p += 270;
+	}
+
+	//windows border
+	glColor3ub(70, 100, 145);
+	p = 340; q = 260;
+	for (int j = 0; j < 4; j++) {
+		glBegin(GL_LINE_LOOP);
+		glVertex2f(p, q);
+		glVertex2f(p + 50, q);
+		glVertex2f(p + 50, q + 50);
+		glVertex2f(p, q + 50);
+		glEnd();
+		p += 90;
+	}
+
+	p = 340;
+	q -= 80;
+	for (int j = 0; j < 2; j++) {
+		glBegin(GL_LINE_LOOP);
+		glVertex2f(p, q);
+		glVertex2f(p + 50, q);
+		glVertex2f(p + 50, q + 50);
+		glVertex2f(p, q + 50);
+		glEnd();
+		p += 270;
+	}
 	glFlush();
 
+}
+void theatre()
+{
+	//bottom
+	glColor3ub(160, 27, 39);
+	glBegin(GL_POLYGON);
+	glVertex2f(20, 140);
+	glVertex2f(300, 140);
+	glVertex2f(300, 260);
+	glColor3ub(197, 57, 69);
+	glVertex2f(20, 260);
+	glEnd();
+
+	//inner bottom
+	glBegin(GL_POLYGON);
+	glVertex2f(40,140);
+	glVertex2f(280,140);
+	glVertex2f(280,230);
+	glVertex2f(40,230);
+	glEnd();
+
+	// door
+	glColor3ub(183, 184, 188);
+	glBegin(GL_POLYGON);
+	glVertex2f(100, 140);
+	glVertex2f(220, 140);
+	glVertex2f(220, 200);
+	glVertex2f(100, 200);
+	glEnd();
+
+	//door divider
+	glBegin(GL_LINES);
+	glColor3ub(100, 99, 97);
+	glVertex2f(160, 140);
+	glVertex2f(160, 200);
+	glEnd();
+
+	//door border
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(100, 140);
+	glVertex2f(220, 140);
+	glVertex2f(220, 200);
+	glVertex2f(100, 200);
+	glEnd();
+
+	//bottom border
+	glColor3ub(155, 22, 34);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(20, 140);
+	glVertex2f(300, 140);
+	glVertex2f(300, 260);
+	glVertex2f(20, 260);
+	glEnd();
+
+	//rods
+	glColor3f(0, 0, 0);
+	glLineWidth(5);
+	glBegin(GL_LINES);
+	glVertex2i(45,260);
+	glVertex2i(45,280);
+	glVertex2i(275, 260);
+	glVertex2i(275, 280);
+	glEnd();
+	glLineWidth(1);
+
+	//top
+	glBegin(GL_POLYGON);
+	glVertex2f(10,280);
+	glVertex2f(310,280);
+	glVertex2f(310,330);
+	glVertex2f(10,330);
+	glEnd();
+
+	//THEATRE
+	print(80, 295, 255, 255, 255, "CINEMA HALL");
+
+	//bulbs
+	glColor3f(light_r, light_g, light_b);
+	glPointSize(4);
+	glBegin(GL_POINTS);
+	//left
+	int p = 10, q = 280;
+	for (int i = 0; i < 5; i++) {
+		glVertex2i(p, q);
+		q += 12;
+	}
+
+	//right
+	p = 310; q = 280;
+	for (int i = 0; i < 5; i++) {
+		glVertex2i(p, q);
+		q += 12;
+	}
+	
+	//top
+	p = 10; q = 330;
+	for (int i = 0; i < 26; i++) {
+		glVertex2i(p, q);
+		p += 12;
+	}
+
+	//bottom
+	p = 10; q = 280;
+	for (int i = 0; i < 26; i++) {
+		glVertex2i(p, q);
+		p += 12;
+	}
+	glEnd();
+	glFlush();
+
+}
+void draw_circle(Point pC, GLfloat radius) {
+	GLfloat step = 1 / radius;
+	GLfloat x, y;
+	glColor3f(light_r, light_g, light_b);
+	glPointSize(1);
+	glBegin(GL_POINTS);
+
+	for (GLfloat theta = 0; theta <= 360; theta += step) {
+		x = pC.x + (radius * cos(theta));
+		y = pC.y + (radius * sin(theta));
+		glVertex2i(x, y);
+	}
+	glEnd();
+	glFlush();
+}
+void house()
+{
+	//house
+	glColor3ub(184, 100, 49);
+	glBegin(GL_POLYGON);
+	glVertex2i(720, 140);
+	glVertex2i(980, 140);
+	glVertex2i(980, 220);
+	glVertex2i(820, 220);
+	glVertex2i(820, 300);
+	glColor3ub(240, 152, 94);
+	glVertex2i(720, 300);
+	glVertex2i(720, 220);
+	glEnd();
+
+	//border
+	glColor3ub(38, 36, 35);
+	glBegin(GL_LINE_LOOP);
+	glVertex2i(720, 140);
+	glVertex2i(980, 140);
+	glVertex2i(980, 220);
+	glVertex2i(820, 220);
+	glVertex2i(820, 300);
+	glVertex2i(720, 300);
+	glVertex2i(720, 220);
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex2i(720, 220);
+	glVertex2i(820, 220);
+	glVertex2i(820, 140);
+	glEnd();
+
+
+	//roof 1
+	glColor3ub(94, 52, 26);
+	glBegin(GL_POLYGON);
+	glVertex2i(710, 300);
+	glVertex2i(830, 300);
+	glColor3ub(38, 36, 35);
+	glVertex2i(770, 380);
+	glEnd();
+
+	Point p = { 770,330 };
+	draw_circle(p, 10);
+	//roof 2
+	glColor3ub(94, 52, 26);
+	glBegin(GL_POLYGON);
+	glVertex2i(820, 221);
+	glVertex2i(990, 221);
+	glColor3ub(38, 36, 35);
+	glVertex2i(920, 285);
+	glVertex2i(820, 285);
+	glEnd();
+
+	//roof 1 border
+	glColor3ub(38, 36, 35);
+	glBegin(GL_LINE_LOOP);
+	glVertex2i(710, 300);
+	glVertex2i(830, 300);
+	glVertex2i(770, 380);
+	glEnd();
+
+	//roof 2 border
+	glColor3ub(38, 36, 35);
+	glBegin(GL_LINE_LOOP);
+	glVertex2i(820, 220);
+	glVertex2i(990, 220);
+	glVertex2i(920, 285);
+	glVertex2i(820, 285);
+	glEnd();
+	//window 1
+	glBegin(GL_POLYGON);
+	glColor3ub(75, 128, 243);
+	glVertex2f(750, 240);
+	glVertex2f(790, 240);
+	glVertex2f(790, 280);
+	glColor3ub(97, 131, 159);
+	glVertex2f(750, 280);
+	glEnd();
+
+	//window 1 border
+	glBegin(GL_LINE_LOOP);
+	glColor3ub(70, 100, 145);
+	glVertex2f(750, 240);
+	glVertex2f(790, 240);
+	glVertex2f(790, 280);
+	glVertex2f(750, 280);
+	glEnd();
+
+	//door
+	glBegin(GL_POLYGON);
+	glColor3ub(191, 185, 181);
+	glVertex2f(750, 141);
+	glVertex2f(790, 141);
+	glVertex2f(790, 200);
+	glVertex2f(750, 200);
+	glEnd();
+
+	//door divider
+	glBegin(GL_LINES);
+	glColor3ub(100, 99, 97);
+	glVertex2f(770, 141);
+	glVertex2f(770, 200);
+	glEnd();
+
+	//door border
+	glBegin(GL_LINE_LOOP);
+	glColor3ub(100, 99, 97);
+	glVertex2f(750, 141);
+	glVertex2f(790, 141);
+	glVertex2f(790, 200);
+	glVertex2f(750, 200);
+	glEnd();
+
+	//window 2
+	glBegin(GL_POLYGON);
+	glColor3ub(75, 128, 243);
+	glVertex2f(850, 160);
+	glVertex2f(950, 160);
+	glVertex2f(950, 200);
+	glColor3ub(97, 131, 159);
+	glVertex2f(850, 200);
+	glEnd();
+
+	//window 2 border
+	glBegin(GL_LINE_LOOP);
+	glColor3ub(70, 100, 145);
+	glVertex2f(850, 160);
+	glVertex2f(950, 160);
+	glVertex2f(950, 200);
+	glVertex2f(850, 200);
+	glEnd();
+
+
+
+
+	glFlush();
 }
 void stars()
 {
@@ -85,7 +484,7 @@ void stars()
 		srand(i + 100);
 		x = rand() % 1000;
 		y = rand() % 600 + 460;
-		glPointSize(2);
+		
 		glBegin(GL_POINTS);
 		glVertex2i(x, y);
 		glEnd();
@@ -116,7 +515,7 @@ void road()
 		glVertex2i(p + 2, 28);
 		glEnd();
 		p = q + 100;
-		q = p + 70;;
+		q = p + 70;
 	}
 
 	//footpath
@@ -168,7 +567,9 @@ void scene(void)
 	stars();
 	road();
 	grass();
-	mall();
+	school();
+	house();
+	theatre();
 	streetlight();
 }
 void keyboard(unsigned char key, int x, int y)
@@ -179,6 +580,9 @@ void keyboard(unsigned char key, int x, int y)
 		star_r = 1; star_g = 1; star_b = 1;
 		grass_g = 0.2;
 		bg_r2 = 0; bg_g2 = 0; bg_b2 = 0;
+		school_dr = 200; school_dg = 88; school_db = 64;
+
+		glPointSize(2);
 	}
 	else if (key == 'd') {
 		bg_r = 0; bg_g = 0.8; bg_b = 1.5; //bg down
@@ -186,6 +590,10 @@ void keyboard(unsigned char key, int x, int y)
 		star_r = 1; star_g = 1; star_b = 0;
 		grass_g = 0.5;
 		bg_r2 = 1; bg_g2 = 1; bg_b2 = 0; //bg up
+		school_dr = 184; school_dg = 88; school_db = 64;
+
+		glPointSize(1);
+
 	}
 	glutPostRedisplay();
 
