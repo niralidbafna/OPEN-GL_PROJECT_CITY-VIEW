@@ -10,12 +10,13 @@ float star_r = 1, star_g = 1, star_b = 0;
 float school_dr = 184, school_dg = 88, school_db = 64;
 float grass_g = 0.5, ps=1;
 GLint xr = 0, yr = 0;
+int SCENE_ID=1;
 GLint cx1=115, cy1=110, cx4=115, cy4=130;//carlight co-ordinates
 struct Point {
 	GLint x;
 	GLint y;
 };
-float  counter = 600;
+float  counter = 900;
 void init(void)
 {
 	glClearColor(1.0, 1.0, 1.0, 0.0);
@@ -78,7 +79,7 @@ void car()
 {
 	//Bottom Part
 	glLoadIdentity();
-	counter = counter - 0.05;
+	counter = counter - 0.15;
 	glColor3ub(37, 64, 154);
 	glTranslated(counter, -60, 0.0);
 	glBegin(GL_POLYGON);
@@ -123,7 +124,11 @@ void car()
 	glVertex2i(247, 175);
 	glEnd();
 
-
+	//door handle
+	glBegin(GL_LINES);
+	glVertex2i(233, 130);
+	glVertex2i(244, 130);
+	glEnd();
 
 	wheel(190, 100);
 	wheel(305, 100);
@@ -134,19 +139,20 @@ void car()
 	glVertex2i(305, 100);
 	glEnd();
 
-	
+	if (counter < -400)
+		counter = 1100;
 
 
 
 }
-void print(int x, int y, float r, float g, float b, const char* str)
+void print(int x, int y, float r, float g, float b, const char* str, void *font)
 {
 	glColor3f(r, g, b);
 	glRasterPos2f(x, y);
 	int len, i;
 	len = (int)strlen(str);
 	for (i = 0; i < len; i++) {
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[i]);
+		glutBitmapCharacter(font, str[i]);
 	}
 }
 void streetlight()
@@ -231,7 +237,7 @@ void school()
 	glVertex2f(590, 380);
 	glVertex2f(420, 380);
 	glEnd();
-	print(430, 345, 255, 255, 255, "RNS SCHOOL");
+	print(430, 345, 255, 255, 255, "RNS SCHOOL",GLUT_BITMAP_TIMES_ROMAN_24);
 
 	//board border
 	glBegin(GL_LINE_LOOP);
@@ -405,7 +411,7 @@ void theatre()
 	glEnd();
 
 	//THEATRE
-	print(80, 295, 255, 255, 255, "CINEMA HALL");
+	print(80, 295, 255, 255, 255, "CINEMA HALL",GLUT_BITMAP_TIMES_ROMAN_24);
 
 	//bulbs
 	glColor3f(light_r, light_g, light_b);
@@ -511,6 +517,11 @@ void house()
 	glVertex2i(920, 285);
 	glVertex2i(820, 285);
 	glEnd();
+
+	print(830, 265, 1, 1, 1, "Press ' S ' for stop", GLUT_BITMAP_HELVETICA_10);
+	print(830, 252, 1, 1, 1, "Press ' R ' for resume", GLUT_BITMAP_HELVETICA_10);
+	print(830, 239, 1, 1, 1, "Press ' N ' for night mode", GLUT_BITMAP_HELVETICA_10);
+	print(830, 226, 1, 1, 1, "Press ' D ' for day mode", GLUT_BITMAP_HELVETICA_10);
 
 	//roof 1 border
 	glColor3ub(38, 36, 35);
@@ -703,6 +714,44 @@ void scene(void)
 	theatre();
 	streetlight();
 	cardisplay();
+	
+	glutPostRedisplay();
+}
+void introduction()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(0, 0, 0, 1);
+	print(320, 500, 0, 0, 1, "RNS INSTITUTE OF TECHNOLOGY",GLUT_BITMAP_TIMES_ROMAN_24);
+	print(370, 470, 0, 0, 1, "CHANNASANDRA, BANGALORE",GLUT_BITMAP_HELVETICA_18);
+	print(370, 410, 1, 0, 0, "CITY VIEW OPENGL PROJECT", GLUT_BITMAP_HELVETICA_18);
+	print(375, 350, 0, 0, 1, "NIRALI D BAFNA, 1RN19CS088", GLUT_BITMAP_HELVETICA_18);
+	print(385, 320, 0, 0, 1, "MEGHANA GN, 1RN19CS078", GLUT_BITMAP_HELVETICA_18);
+	print(700, 50, 1, 0, 0, "Press ' r ' to enter into the scene", GLUT_BITMAP_HELVETICA_18);
+	
+	glFlush();
+	glutSwapBuffers();
+	glLoadIdentity();
+}
+void stop()
+{
+	glClearColor(0, 0, 0, 0);
+	glFlush();
+}
+void display()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	switch (SCENE_ID)
+	{
+		case 1: introduction();
+			break;
+
+		case 2: scene();
+			break;
+
+		case 3: stop();
+			break;
+	}
+	
 }
 void keyboard(unsigned char key, int x, int y)
 {
@@ -729,7 +778,16 @@ void keyboard(unsigned char key, int x, int y)
 		xr = 0.1; yr = 0.1;
 
 	}
+	else if (key == 'r')
+	{
+		SCENE_ID = 2;
+	}
+	else if (key == 's')
+	{
+		SCENE_ID = 3;
+	}
 	glutPostRedisplay();
+	glFlush();
 
 }
 int main(int argc, char** argv)
@@ -742,7 +800,7 @@ int main(int argc, char** argv)
 	
 
 	init();
-	glutDisplayFunc(scene);
+	glutDisplayFunc(display);
 	glutKeyboardFunc(keyboard);
 	glutMainLoop();
 	return 0;
