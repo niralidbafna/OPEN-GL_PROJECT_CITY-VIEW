@@ -8,15 +8,18 @@ float bg_r = 0, bg_g = 0.8, bg_b = 1.5; //bg down
 float bg_r2 = 1, bg_g2 = 1, bg_b2 = 0; //bg up
 float star_r = 1, star_g = 1, star_b = 0;
 float school_dr = 184, school_dg = 88, school_db = 64;
-float grass_g = 0.5, ps=1;
+float grass_g = 0.5, ps = 1;
 GLint xr = 0, yr = 0;
-int SCENE_ID=1;
-GLint cx1=115, cy1=110, cx4=115, cy4=130;//carlight co-ordinates
+float carspeed = 0.25;
+int SCENE_ID = 1;
+#define PI 3.141592653589
+
+GLint cx1 = 115, cy1 = 110, cx4 = 115, cy4 = 130;//carlight co-ordinates
 struct Point {
 	GLint x;
 	GLint y;
 };
-float  counter = 900;
+float  counter = 900, counterman = 650;
 void init(void)
 {
 	glClearColor(1.0, 1.0, 1.0, 0.0);
@@ -56,7 +59,7 @@ void moon(int x, int y)
 {
 	float th;
 	glBegin(GL_POLYGON);
-	glColor3f(1,1,1);
+	glColor3f(1, 1, 1);
 	for (int i = 0; i < 360; i++)
 	{
 		th = i * (3.1416 / 180);
@@ -70,16 +73,164 @@ void carlight()
 	glColor3f(light_r, light_g, light_b);
 	glBegin(GL_POLYGON);
 	glVertex2i(cx1, cy1);
-	glVertex2i(120,115);
-	glVertex2i(120,125);
-	glVertex2i(cx4,cy4);
+	glVertex2i(120, 115);
+	glVertex2i(120, 125);
+	glVertex2i(cx4, cy4);
 	glEnd();
+}
+void drawSemiCircle(GLfloat tx, GLfloat ty,
+	GLfloat sx, GLfloat sy,
+	GLfloat r, GLfloat g, GLfloat b,
+	GLfloat radius,
+	GLfloat start_angle, GLfloat end_angle) {
+	glPushMatrix();
+
+	glTranslatef(tx, ty, 0);
+	glScalef(sx, sy, 0);
+
+	glBegin(GL_POLYGON);
+	glColor3ub(r, g, b);
+	for (GLfloat i = start_angle; i < end_angle; i += 5)
+		glVertex2f(radius * sin(i * PI / 180), radius * cos(i * PI / 180));
+	glEnd();
+
+	glPopMatrix();
+}
+void drawCircle(GLfloat x, GLfloat y,
+	GLfloat r, GLfloat g, GLfloat b,
+	GLfloat sx, GLfloat sy,
+	GLfloat radius) {
+	glPushMatrix();
+
+	glTranslatef(x, y, 0);
+	glScalef(sx, sy, 0);
+
+	glBegin(GL_POLYGON);
+	glColor3ub(r, g, b);
+	for (GLfloat i = 0; i < 360; i += 5)
+		glVertex2f(radius * sin(i * PI / 180), radius * cos(i * PI / 180));
+	glEnd();
+
+	glPopMatrix();
+}
+void man()
+{
+	glPushMatrix();
+	glLoadIdentity();
+	counterman = counterman - 0.15;
+	glColor3ub(37, 64, 154);
+	glTranslated(counterman, 0, 0.0);
+
+	//shoe extension
+	glBegin(GL_POLYGON);
+	glColor3ub(234, 10, 10);
+	glVertex2f(120, 120);
+	glVertex2f(127, 120);
+	glVertex2f(127, 132);
+	glVertex2f(120, 132);
+	glEnd();
+
+	//shoe extension
+	glBegin(GL_POLYGON);
+	glColor3ub(0, 0, 0);
+	glVertex2f(120, 120);
+	glVertex2f(128, 120);
+	glVertex2f(128, 129);
+	glVertex2f(120, 129);
+	glEnd();
+
+	//shoes
+	drawSemiCircle(120, 120,
+		1, 1,
+		0, 0, 0,
+		8,
+		-90, 91);
+
+
+
+	// Pants
+	glBegin(GL_POLYGON);
+	glColor3ub(0, 0, 200);
+	glVertex2f(118, 132);
+	glVertex2f(129, 132);
+	glVertex2f(129, 160);
+	glVertex2f(118, 160);
+	glEnd();
+
+	// Shirt
+	glBegin(GL_POLYGON);
+	glColor3ub(234, 10, 10);
+	glVertex2f(116, 160);
+	glVertex2f(131, 160);
+	glVertex2f(129, 190);
+	glVertex2f(118, 190);
+	glEnd();
+
+	// Bag
+	glBegin(GL_POLYGON);
+	glColor3ub(0, 0, 0);
+	glVertex2f(130, 164);
+	glVertex2f(137, 164);
+	glVertex2f(135, 186);
+	glVertex2f(129, 186);
+	glEnd();
+
+	// Hair
+
+	drawSemiCircle(126, 199,
+		1, 1,
+		234, 10, 10,
+		11,
+		-80, 180);
+
+	// Head
+	drawCircle(123, 199,
+		232, 190, 123,
+		1, 1.2,
+		8);
+
+
+	// Eye
+	glPointSize(3);
+	glBegin(GL_POINTS);
+	glColor3ub(0, 0, 0);
+	glVertex2f(121, 201);
+	glEnd();
+	glPointSize(1);
+
+	// Lips
+	glLineWidth(2);
+	glBegin(GL_LINE_STRIP);
+	glColor3ub(0, 0, 0);
+	glVertex2f(115, 196);
+	glVertex2f(119, 194);
+	glVertex2f(123, 195);
+	glEnd();
+	glPointSize(1);
+	//out of house initially =650
+	if (counterman > 350 && counterman < 400) //get inside school
+		counterman = 1300;
+	else if (counterman > 1100 && counterman < 1200) //get out of school
+		counterman = 350;
+	else if (counterman < 50 && counterman>45) //get inside theatre
+		counterman = 1500;
+	else if (counterman < 1400 && counterman>1300) //get outside theatre
+		counterman = 45;
+	else if (counterman < -150) //walk on road
+		counterman = 1000;
+	else if (counterman > 651 && counterman < 655) //get inside house
+		counterman = 1700;
+	else if (counterman > 1500 && counterman < 1600) //get outside house
+		counterman = 650;
+
+	glPopMatrix();
+
 }
 void car()
 {
 	//Bottom Part
 	glLoadIdentity();
-	counter = counter - 0.15;
+	counter = counter - carspeed;
 	glColor3ub(37, 64, 154);
 	glTranslated(counter, -60, 0.0);
 	glBegin(GL_POLYGON);
@@ -87,6 +238,7 @@ void car()
 	glVertex2f(370, 100);
 	glVertex2f(370, 140);
 	glVertex2f(120, 140);
+	glEnd();
 
 	//Top Part
 	glBegin(GL_POLYGON);
@@ -99,12 +251,12 @@ void car()
 	//window1
 	glColor3f(1, 1, 1);
 	glBegin(GL_POLYGON);
-	glVertex2i(175,145);
-	glVertex2i(240,145);
-	glVertex2i(240,172);
-	glVertex2i(202,172);
+	glVertex2i(175, 145);
+	glVertex2i(240, 145);
+	glVertex2i(240, 172);
+	glVertex2i(202, 172);
 	glEnd();
-	
+
 
 	carlight();
 
@@ -145,7 +297,7 @@ void car()
 
 
 }
-void print(int x, int y, float r, float g, float b, const char* str, void *font)
+void print(int x, int y, float r, float g, float b, const char* str, void* font)
 {
 	glColor3f(r, g, b);
 	glRasterPos2f(x, y);
@@ -237,7 +389,7 @@ void school()
 	glVertex2f(590, 380);
 	glVertex2f(420, 380);
 	glEnd();
-	print(430, 345, 255, 255, 255, "RNS SCHOOL",GLUT_BITMAP_TIMES_ROMAN_24);
+	print(430, 345, 255, 255, 255, "RNS SCHOOL", GLUT_BITMAP_TIMES_ROMAN_24);
 
 	//board border
 	glBegin(GL_LINE_LOOP);
@@ -411,7 +563,7 @@ void theatre()
 	glEnd();
 
 	//THEATRE
-	print(80, 295, 255, 255, 255, "CINEMA HALL",GLUT_BITMAP_TIMES_ROMAN_24);
+	print(80, 295, 255, 255, 255, "CINEMA HALL", GLUT_BITMAP_TIMES_ROMAN_24);
 
 	//bulbs
 	glColor3f(light_r, light_g, light_b);
@@ -712,24 +864,32 @@ void scene(void)
 	school();
 	house();
 	theatre();
+	man();
 	streetlight();
 	cardisplay();
-	
+
 	glutPostRedisplay();
 }
 void introduction()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
 	glClearColor(0, 0, 0, 1);
-	print(320, 500, 0, 0, 1, "RNS INSTITUTE OF TECHNOLOGY",GLUT_BITMAP_TIMES_ROMAN_24);
-	print(370, 470, 0, 0, 1, "CHANNASANDRA, BANGALORE",GLUT_BITMAP_HELVETICA_18);
+	glClear(GL_COLOR_BUFFER_BIT);
+	print(320, 500, 1, 1, 1, "RNS INSTITUTE OF TECHNOLOGY", GLUT_BITMAP_TIMES_ROMAN_24);
+	print(370, 470, 1, 1, 1, "CHANNASANDRA, BANGALORE", GLUT_BITMAP_HELVETICA_18);
 	print(370, 410, 1, 0, 0, "CITY VIEW OPENGL PROJECT", GLUT_BITMAP_HELVETICA_18);
-	print(375, 350, 0, 0, 1, "NIRALI D BAFNA, 1RN19CS088", GLUT_BITMAP_HELVETICA_18);
-	print(385, 320, 0, 0, 1, "MEGHANA GN, 1RN19CS078", GLUT_BITMAP_HELVETICA_18);
-	print(700, 50, 1, 0, 0, "Press ' r ' to enter into the scene", GLUT_BITMAP_HELVETICA_18);
-	
+	print(415, 373, 1, 1, 1, "GUIDE: MRS. MAMATHA JAJUR", GLUT_BITMAP_HELVETICA_12);
+	print(375, 320, 0, 0, 1, "NIRALI D BAFNA 1RN19CS088", GLUT_BITMAP_HELVETICA_18);
+	print(385, 290, 0, 0, 1, "MEGHANA GN 1RN19CS078", GLUT_BITMAP_HELVETICA_18);
+
+	print(50, 215, 1, 1, 1, "INSTRUCTIONS: ", GLUT_BITMAP_HELVETICA_12);
+	print(50, 190, 1, 1, 1, "-> Press ' r ' to enter into the scene", GLUT_BITMAP_HELVETICA_12);
+	print(50, 175, 1, 1, 1, "-> Press ' UP ARROW ' to increase car speed", GLUT_BITMAP_HELVETICA_12);
+	print(50, 160, 1, 1, 1, "-> Press ' DOWN ARROW ' to decrease car speed", GLUT_BITMAP_HELVETICA_12);
+	print(50, 145, 1, 1, 1, "-> Press ' LEFT ARROW ' for normal car speed", GLUT_BITMAP_HELVETICA_12);
+	print(50, 130, 1, 1, 1, "-> Press ' RIGHT ARROW ' to reverse car", GLUT_BITMAP_HELVETICA_12);
+
 	glFlush();
-	glutSwapBuffers();
+	glutSwapBuffers();s
 	glLoadIdentity();
 }
 void stop()
@@ -742,16 +902,16 @@ void display()
 	glClear(GL_COLOR_BUFFER_BIT);
 	switch (SCENE_ID)
 	{
-		case 1: introduction();
-			break;
+	case 1: introduction();
+		break;
 
-		case 2: scene();
-			break;
+	case 2: scene();
+		break;
 
-		case 3: stop();
-			break;
+	case 3: stop();
+		break;
 	}
-	
+
 }
 void keyboard(unsigned char key, int x, int y)
 {
@@ -786,9 +946,31 @@ void keyboard(unsigned char key, int x, int y)
 	{
 		SCENE_ID = 3;
 	}
+
 	glutPostRedisplay();
 	glFlush();
 
+}
+void special(int key, int x, int y)
+{
+	if (key == GLUT_KEY_UP)
+	{
+		carspeed = 0.5;
+	}
+	else if (key == GLUT_KEY_DOWN)
+	{
+		carspeed = 0.1;
+	}
+	else if (key == GLUT_KEY_LEFT)
+	{
+		carspeed = 0.25;
+	}
+	else if (key == GLUT_KEY_RIGHT)
+	{
+		carspeed = -0.25;
+	}
+	glutPostRedisplay();
+	glFlush();
 }
 int main(int argc, char** argv)
 {
@@ -797,11 +979,11 @@ int main(int argc, char** argv)
 	glutInitWindowPosition(100, 0);
 	glutInitWindowSize(1000, 600);
 	glutCreateWindow("CITY VIEW");
-	
 
 	init();
 	glutDisplayFunc(display);
 	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(special);
 	glutMainLoop();
 	return 0;
 }
