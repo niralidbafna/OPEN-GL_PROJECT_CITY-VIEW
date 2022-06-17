@@ -282,20 +282,21 @@ void car()
 	glVertex2i(244, 130);
 	glEnd();
 
+	//wheel
 	wheel(190, 100);
 	wheel(305, 100);
 
+	//axis point
+	glPointSize(2);
 	glColor3f(1, 1, 1);
 	glBegin(GL_POINTS);
 	glVertex2i(190, 100);
 	glVertex2i(305, 100);
 	glEnd();
+	glPointSize(1);
 
 	if (counter < -400)
 		counter = 1100;
-
-
-
 }
 void print(int x, int y, float r, float g, float b, const char* str, void* font)
 {
@@ -889,7 +890,7 @@ void introduction()
 	print(50, 130, 1, 1, 1, "-> Press ' RIGHT ARROW ' to reverse car", GLUT_BITMAP_HELVETICA_12);
 
 	glFlush();
-	glutSwapBuffers();s
+	glutSwapBuffers();
 	glLoadIdentity();
 }
 void stop()
